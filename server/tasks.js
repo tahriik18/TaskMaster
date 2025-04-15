@@ -2,67 +2,64 @@ const express = require('express');
 const router = express.Router();
 const db = require('./dbConnection');
 
-//Retrieves all tasks from database
-router.get('/', (req, res)=>{
-  //SQL query to select all tasks
-    const sql = 'SELECT * FROM tasks';
-
-    //execute the query
-    db.query(sql, (err, results)=>{
-        if(err){
-            console.error(err);
-            return res.status(500).send('Server error');
-        }
-        res.json(results);
-    });
+// ✅ GET all tasks
+router.get('/', (req, res) => {
+  const sql = 'SELECT * FROM tasks';
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).send('Server error');
+    res.json(results);
+  });
 });
 
-//Creates a new task in the database
-router.post('/', (req, res)=>{
-    const {description, due_date, priority, assign_to} = req.body;
+// ✅ POST: create a new task
+router.post('/', (req, res) => {
+  const { description, due_date } = req.body;
+  if (!description?.trim()) return res.status(400).send('Description is required');
 
-    //SQL query to insert a new task into the tasks table
-    const sql = 'INSERT INTO tasks (description, due_date, priority, assign_to) VALUES ( ?,?,?,?)';
-    db.query(sql, [description, due_date, priority, assign_to], (err, result)=>{
-        if (err){
-            console.error(err);
-            return res.status(500).send('Server error');
-        }
-        res.json({success: true, insertId: result.insertId});
-    });
+  const sql = `
+    INSERT INTO tasks (description, due_date, completed, priority, assign_to)
+    VALUES (?, ?, 0, NULL, NULL)
+  `;
+
+  db.query(sql, [description, due_date || null], (err, result) => {
+    if (err) return res.status(500).send('Server error');
+    res.json({ success: true, insertId: result.insertId });
+  });
 });
 
-//Update a task's status based on its ID (example: mark it as complete)
+// Update
 router.put('/:id', (req, res) => {
-  //retrieve task id
-    const { id } = req.params;
+  const { id } = req.params;
+  const { completed } = req.body;
 
-    const { completed } = req.body; // expecting a boolean value
-    
-    //SQL query to update the task's completed status based on its ID
-    const sql = 'UPDATE tasks SET completed = ? WHERE task_id = ?';
-    db.query(sql, [completed, id], (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send('Server error');
-      }
-      res.json({ success: true, affectedRows: result.affectedRows });
-    });
+  const sql = 'UPDATE tasks SET completed = ? WHERE task_id = ?';
+  db.query(sql, [completed, id], (err, result) => {
+    if (err) return res.status(500).send('Server error');
+    res.json({ success: true, affectedRows: result.affectedRows });
   });
+});
 
-  //delete a task from database based on its ID
-  router.delete('/:id', (req, res) => {
-    const { id } = req.params;
+// Edit
+router.put('/edit/:id', (req, res) => {
+  const { id } = req.params;
+  const { description, due_date } = req.body;
 
-    //SQL query to delete the dask with the given ID
-    const sql = 'DELETE FROM tasks WHERE task_id = ?';
-    db.query(sql, [id], (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send('Server error');
-      }
-      res.json({ success: true, affectedRows: result.affectedRows });
-    });
+  const sql = 'UPDATE tasks SET description = ?, due_date = ? WHERE task_id = ?';
+  db.query(sql, [description, due_date || null, id], (err, result) => {
+    if (err) return res.status(500).send('Server error');
+    res.json({ success: true, affectedRows: result.affectedRows });
   });
+});
+
+// DELETE
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+
+  const sql = 'DELETE FROM tasks WHERE task_id = ?';
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).send('Server error');
+    res.json({ success: true, affectedRows: result.affectedRows });
+  });
+});
 
 module.exports = router;
