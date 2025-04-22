@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('./dbConnection');
 
-// ✅ GET all tasks
+// GET all tasks
 router.get('/', (req, res) => {
   const sql = 'SELECT * FROM tasks';
   db.query(sql, (err, results) => {
@@ -11,17 +11,17 @@ router.get('/', (req, res) => {
   });
 });
 
-// ✅ POST: create a new task
+// POST: create a new task
 router.post('/', (req, res) => {
-  const { description, due_date } = req.body;
+  const { description, due_date, priority } = req.body;
   if (!description?.trim()) return res.status(400).send('Description is required');
 
   const sql = `
     INSERT INTO tasks (description, due_date, completed, priority, assign_to)
-    VALUES (?, ?, 0, NULL, NULL)
+    VALUES (?, ?, 0, ?, NULL)
   `;
 
-  db.query(sql, [description, due_date || null], (err, result) => {
+  db.query(sql, [description, due_date || null, priority || null], (err, result) => {
     if (err) return res.status(500).send('Server error');
     res.json({ success: true, insertId: result.insertId });
   });
@@ -42,10 +42,10 @@ router.put('/:id', (req, res) => {
 // Edit
 router.put('/edit/:id', (req, res) => {
   const { id } = req.params;
-  const { description, due_date } = req.body;
+  const { description, due_date, priority } = req.body;
 
-  const sql = 'UPDATE tasks SET description = ?, due_date = ? WHERE task_id = ?';
-  db.query(sql, [description, due_date || null, id], (err, result) => {
+  const sql = 'UPDATE tasks SET description = ?, due_date = ?, priority = ? WHERE task_id = ?';
+  db.query(sql, [description, due_date || null, priority || null, id], (err, result) => {
     if (err) return res.status(500).send('Server error');
     res.json({ success: true, affectedRows: result.affectedRows });
   });
