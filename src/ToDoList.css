@@ -103,3 +103,19 @@ body {
   cursor: pointer;
   margin-left: 8px;
 }
+.task-priority {
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+.priority-High {
+  color: #ff4d4d;
+}
+
+.priority-Medium {
+  color: #ffc107;
+}
+
+.priority-Low {
+  color: #6fcf97;
+}
