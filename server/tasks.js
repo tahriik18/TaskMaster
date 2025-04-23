@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('./dbConnection');
 
-// ✅ Get all tasks
+// Get all tasks
 router.get('/', (req, res) => {
   const sql = 'SELECT * FROM tasks';
   db.query(sql, (err, results) => {
@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
   });
 });
 
-// ✅ Create a new task (supports priority)
+// Create a new task 
 router.post('/', (req, res) => {
   const { description, due_date, priority } = req.body;
   if (!description?.trim()) return res.status(400).send('Description is required');
@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
   });
 });
 
-// ✅ Update completion status
+// Update 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const { completed } = req.body;
@@ -39,7 +39,7 @@ router.put('/:id', (req, res) => {
   });
 });
 
-// ✅ Edit description, due_date, and priority
+// Edit description, due_date, and priority
 router.put('/edit/:id', (req, res) => {
   const { id } = req.params;
   const { description, due_date, priority } = req.body;
@@ -51,7 +51,7 @@ router.put('/edit/:id', (req, res) => {
   });
 });
 
-// ✅ Delete task
+// Delete task
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
 
