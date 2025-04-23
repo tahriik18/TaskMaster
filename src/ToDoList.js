@@ -21,7 +21,20 @@ function ToDoList() {
 
   const fetchTasks = () => {
     axios.get('http://localhost:3001/api/tasks')
-      .then(res => setTasks(res.data))
+      .then(res => {
+        const sorted = res.data.sort((a, b) => {
+          // Define order of priorities
+          const priorityOrder = { "High": 1, "Medium": 2, "Low": 3, "": 4, null: 4 };
+  
+          // Put incomplete tasks first, completed ones last
+          if (a.completed !== b.completed) return a.completed ? 1 : -1;
+  
+          // sort by priority
+          return priorityOrder[a.priority] - priorityOrder[b.priority];
+        });
+  
+        setTasks(sorted);
+      })
       .catch(err => console.error('Error fetching tasks:', err));
   };
 
@@ -37,6 +50,7 @@ function ToDoList() {
     .then(() => {
       setNewTask('');
       setDueDate('');
+      setPriority('');
       setPriority('');
       fetchTasks();
     })
@@ -190,6 +204,10 @@ function ToDoList() {
               <>
                 <div className="task-info">
                   <div className="task-desc">{task.description}</div>
+
+                  {task.priority &&(
+                    <div className="task-priority">Priority: {task.priority}</div>
+                  )}
                   {task.due_date && (
                     <div className="task-due">Due: {new Date(task.due_date).toLocaleDateString()}</div>
                   )}
