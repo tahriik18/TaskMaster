@@ -1,4 +1,3 @@
-// src/Navbar.js
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
@@ -8,7 +7,6 @@ function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Optional: Clear user session or token here
     navigate('/');
   };
 
