@@ -119,3 +119,21 @@ body {
 .priority-Low {
   color: #6fcf97;
 }
+
+.progress-container {
+  margin-bottom: 20px;
+  color: white;
+}
+
+.progress-bar {
+  background-color: #444;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 20px;
+}
+
+.progress-fill {
+  background-color: #00c0ff;
+  height: 100%;
+  transition: width 0.3s ease;
+}

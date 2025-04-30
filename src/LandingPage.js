@@ -8,8 +8,8 @@ function LandingPage() {
       <main className="main-content">
         <h1>Welcome to TaskMaster</h1>
         <p>Organize your life with smart task tracking.</p>
-        <Link to="/tasks">
-          <button className="cta-button">Get Started</button>
+        <Link to="/login">
+          <button className="cta-button">Login</button>
         </Link>
       </main>
     </div>

@@ -30,5 +30,5 @@ db.query(schema, (err, result) => {
   } else {
     console.log('taskmaster database and tasks table created (or already existed).');
   }
-  db.end(); // close connection
+  db.end(); 
 });
