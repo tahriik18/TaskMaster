@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ToDoList.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function ToDoList() {
   const [tasks, setTasks] = useState([]);
@@ -145,14 +146,15 @@ function ToDoList() {
       </div>
 
       <div className="search-row">
-     <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search tasks..."
-        className="search-input"
-     />
-   </div>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search tasks..."
+          className="search-input"
+        />
+      </div>
+
       <div className="progress-info">
         <div className="progress-text">{completedCount} of {totalCount} tasks completed</div>
         <div className="progress-bar">
@@ -176,60 +178,70 @@ function ToDoList() {
       </div>
 
       <ul className="task-list">
-        {sortedTasks.map(task => {
-          const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.completed;
+        <AnimatePresence>
+          {sortedTasks.map(task => {
+            const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.completed;
 
-          return (
-            <li key={task.task_id} className={`task-item ${task.completed ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`}>
-              <input
-                type="checkbox"
-                checked={!!task.completed}
-                onChange={() => toggleCompletion(task)}
-              />
-              {editId === task.task_id ? (
-                <>
-                  <input
-                    type="text"
-                    value={editTask}
-                    onChange={(e) => setEditTask(e.target.value)}
-                    className="task-input"
-                  />
-                  <input
-                    type="date"
-                    value={editDate}
-                    onChange={(e) => setEditDate(e.target.value)}
-                    className="due-date-input"
-                  />
-                  <select value={editPriority} onChange={(e) => setEditPriority(e.target.value)} className="priority-select">
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                  </select>
-                  <select value={editTag} onChange={(e) => setEditTag(e.target.value)} className="tag-select">
-                    <option value="Work">Work</option>
-                    <option value="Personal">Personal</option>
-                    <option value="School">School</option>
-                  </select>
-                  <button onClick={() => saveEdit(task.task_id)} className="add-button">Save</button>
-                  <button onClick={() => setEditId(null)} className="delete-button">Cancel</button>
-                </>
-              ) : (
-                <>
-                  <div className="task-info">
-                    <div className="task-desc">{task.description}</div>
-                    {task.due_date && <div className="task-due">Due: {new Date(task.due_date).toLocaleDateString()}</div>}
-                    {task.priority && <div className={`task-priority priority-${task.priority}`}>{task.priority}</div>}
-                    {task.tag && <div className="task-tag">{task.tag}</div>}
-                  </div>
-                  <div>
-                    <button className="add-button" onClick={() => startEdit(task)}>Edit</button>
-                    <button className="delete-button" onClick={() => deleteTask(task.task_id)}>Delete</button>
-                  </div>
-                </>
-              )}
-            </li>
-          );
-        })}
+            return (
+              <motion.li
+                key={task.task_id}
+                className={`task-item ${task.completed ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                layout
+              >
+                <input
+                  type="checkbox"
+                  checked={!!task.completed}
+                  onChange={() => toggleCompletion(task)}
+                />
+                {editId === task.task_id ? (
+                  <>
+                    <input
+                      type="text"
+                      value={editTask}
+                      onChange={(e) => setEditTask(e.target.value)}
+                      className="task-input"
+                    />
+                    <input
+                      type="date"
+                      value={editDate}
+                      onChange={(e) => setEditDate(e.target.value)}
+                      className="due-date-input"
+                    />
+                    <select value={editPriority} onChange={(e) => setEditPriority(e.target.value)} className="priority-select">
+                      <option value="Low">Low</option>
+                      <option value="Medium">Medium</option>
+                      <option value="High">High</option>
+                    </select>
+                    <select value={editTag} onChange={(e) => setEditTag(e.target.value)} className="tag-select">
+                      <option value="Work">Work</option>
+                      <option value="Personal">Personal</option>
+                      <option value="School">School</option>
+                    </select>
+                    <button onClick={() => saveEdit(task.task_id)} className="add-button">Save</button>
+                    <button onClick={() => setEditId(null)} className="delete-button">Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <div className="task-info">
+                      <div className="task-desc">{task.description}</div>
+                      {task.due_date && <div className="task-due">Due: {new Date(task.due_date).toLocaleDateString()}</div>}
+                      {task.priority && <div className={`task-priority priority-${task.priority}`}>{task.priority}</div>}
+                      {task.tag && <div className="task-tag">{task.tag}</div>}
+                    </div>
+                    <div>
+                      <button className="add-button" onClick={() => startEdit(task)}>Edit</button>
+                      <button className="delete-button" onClick={() => deleteTask(task.task_id)}>Delete</button>
+                    </div>
+                  </>
+                )}
+              </motion.li>
+            );
+          })}
+        </AnimatePresence>
       </ul>
     </div>
   );
