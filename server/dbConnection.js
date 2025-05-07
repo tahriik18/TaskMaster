@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 
-//create a connection to the MySQL database
+
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -8,7 +8,7 @@ const db = mysql.createConnection({
     database: 'taskmaster'
 });
 
-//connect to the database
+
 db.connect((err) => {
     if (err) {
       console.error('Error connecting to MySQL:', err);

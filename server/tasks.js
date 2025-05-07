@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
   });
 });
 
-// Update completion status
+// Update 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const { completed } = req.body;
@@ -39,7 +39,7 @@ router.put('/:id', (req, res) => {
   });
 });
 
-// Edit task (description, due_date, priority, tag)
+// Edit task 
 router.put('/edit/:id', (req, res) => {
   const { id } = req.params;
   const { description, due_date, priority, tag } = req.body;
