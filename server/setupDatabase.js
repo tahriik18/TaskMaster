@@ -3,9 +3,9 @@ const mysql = require('mysql2');
 // Update these credentials with your local MySQL login
 const db = mysql.createConnection({
   host: 'localhost',
-  user: 'root',               // change this to your own MySQL username
-  password: 'Studybuddy490!',   // Change this to your own MySQL password
-  multipleStatements: true   
+  user: 'root',
+  password: 'Studybuddy490!',
+  multipleStatements: true
 });
 
 const schema = `
@@ -22,13 +22,21 @@ CREATE TABLE IF NOT EXISTS tasks (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS users (
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 `;
 
 db.query(schema, (err, result) => {
   if (err) {
-    console.error('Error setting up the database or table:', err);
+    console.error('Error setting up the database or tables:', err);
   } else {
-    console.log('taskmaster database and tasks table created (or already existed).');
+    console.log('taskmaster database, tasks table, and users table created (or already existed).');
   }
-  db.end(); 
+  db.end();
 });
